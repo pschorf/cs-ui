@@ -1,28 +1,45 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
 
 class App extends Component {
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    console.log(props);
+    const { cookies } = props;
+    this.state = {
+      quota: null,
+      username: cookies.get('username') || 'Test'
+    };
+  }
+
+  componentDidMount() {
+    axios.get('/config.json')
+      .then(res => {
+        const config = res.data;
+        config.clusters.forEach(cluster =>
+          axios.get(cluster.endpoint + '/quota?user=' + this.state.username)
+            .then(quotaResult => {
+              this.setState({quota: {[cluster.name]: quotaResult.data}});
+            })
+        );
+      });
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Cook UI
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+      <div>
+        {JSON.stringify(this.state.quota, undefined, 2)}
       </div>
     );
   }
 }
 
-export default App;
+export default withCookies(App);
