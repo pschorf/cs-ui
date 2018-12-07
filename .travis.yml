@@ -1,4 +1,18 @@
----
 language: node_js
 node_js:
-  - "node"
+- node
+
+script:
+- npm test
+- npm run build
+- pushd build
+- zip -r ../build.zip .
+
+deploy:
+  provider: releases
+  api_key:
+    secure: EE/FS+tii1skN+SC3YcVFUNpFWdSxR5Zy2eMUNNdW6Da1cRHf0NHyKOIzHi3p7HYyhfCruZdNqwa4W/NTtkZKY5vy9JHbVTuTTzRj8fTLilgDBiuhB3cGUDV9ehTEiZeiDbcijMUT2NXX/I6odApaAXUBmVLkRqH7r0HggWsGG9bV3puQaWb1u5/DKT4A72eY+1uziWk+ELKrwn+R63QBj5r0MeEA3OdTQMRzCmwx4TN+4uylyo1FPtfUDSXIugXRNfK0duM2IzcMtiFg4xVVhEfFXEIgFe/AVHopoWSRUz/Sg6V4JSUdXY+abhvyNu0pOIDqapnIg/m4UTNhR6ccTvGHDNGRRZCMY++AcvUrH4P7y5+DDUX7zWWOCwVUUIwy/Z2tQ9ocOQf7x4AAHf+lFtrVrvT9yfazMN3nfPsvwp5eqHKQjVmcnSuOI8NSfTGe4k9aA9S0kQZPqTJVa+WW0oPRm3y+8R4/NFMmLgijsjTh3bbDSrnjbM0GRFxcuC8UVvEByRFoC8i5no43Hp3ZWTmzeCKHq0ASq5BnlbG+ZPE472FAvl2MOPpO/9RSdQCSt66PmOOEw0yIaOWtB6e6nngbhnsSEIwz4sLK7HRnwNzIbtzT994M1U/nrUfhtKWWsdK+W9Cy/5DLz3/qhV201D9DG27tffXMZrkq5F6ue4=
+  file: ./build.zip
+  skip_cleanup: true
+  on:
+    tags: true
